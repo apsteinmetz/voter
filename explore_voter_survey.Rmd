@@ -3,15 +3,15 @@ title: "Are there no Libertarians"
 output: html_notebook
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+load libararies and files
 
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 voter_18_raw <- read_csv("data/VOTER_Survey_April18_Release1.csv")
 ```
-```{r}
+```{r message=FALSE, warning=FALSE}
+
 
 voter_18<- gather(voter_18_raw,"question","answer",
                   -caseid,
