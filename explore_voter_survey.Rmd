@@ -10,6 +10,8 @@ load libararies and files
 library(tidyverse)
 voter_18_raw <- read_csv("data/VOTER_Survey_April18_Release1.csv")
 ```
+
+Massage the data
 ```{r message=FALSE, warning=FALSE}
 
 
@@ -18,13 +20,38 @@ voter_18<- gather(voter_18_raw,"question","answer",
                   -pid3_2018,
                   -race_2018,
                   -gender_2018,
-                  -faminc_new_2018
+                  -faminc_new_2018,
+                  -regzip_2018,
+                  -inputstate_2018
                   ) %>% as_tibble() %>%
+  
   filter(!is.na(caseid)) %>% 
   filter(str_detect(question,"_2018")) %>% 
   filter(!is.na(answer)) %>% 
-  distinct()
-save(voter_18,file="data/voter_18.rdata")
+  distinct() %>% 
+                  {.}
+# make demographic variables factors
+voter_18 <- voter_18 %>%
+  mutate(regzip_2018 %>% as.character(regzip_2018)) %>% 
+  mutate(gender_2018=as.factor(gender_2018)) %>% 
+  mutate(race_2018=as.factor(race_2018)) %>% 
+  mutate(faminc_new_2018=as.factor(faminc_new_2018)) %>% 
+  mutate(pid3_2018=as.factor(pid3_2018)) %>% 
+  rename(party_2018=pid3_2018) %>% 
+  rename(state_2018=inputstate_2018) %>% 
+  rename(income_2018=faminc_new_2018)
+  
+         
+voter_18$inputstate_2018  <- factor(voter_18$inputstate_2018,levels=1:56)
+
+
+
+levels(voter_18$gender_2018) <- c("Male","Female")
+
+
+
+
+# save(voter_18,file="data/voter_18.rdata")
 ```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
