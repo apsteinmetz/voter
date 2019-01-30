@@ -41,12 +41,19 @@ voter_18 <- voter_18 %>%
   rename(state_2018=inputstate_2018) %>% 
   rename(income_2018=faminc_new_2018)
   
-         
-voter_18$inputstate_2018  <- factor(voter_18$inputstate_2018,levels=1:56)
-
+#map numbers to states
+state_plus <- c(state.abb[1:8],"DC",state.abb[9:50])
+voter_18$state_2018 <- factor(voter_18$state_2018)
+levels(voter_18$state_2018) <- state_plus
 
 
 levels(voter_18$gender_2018) <- c("Male","Female")
+levels(voter_18$race_2018) <- c("White","Black","Hispanic",
+                                "Asian","Native Amerian","Mixed",
+                                "Other","Middle Eastern")
+
+levels(voter_18$party_2018) <- c("Democrat","Republican","Independent",
+                                "Other","Not Sure")
 
 
 
