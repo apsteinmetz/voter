@@ -31,7 +31,8 @@ voter_18<- gather(voter_18_raw,"question","answer",
   distinct() %>% 
   {.}
 
-questions_to_keep<-read_csv("questions_to_keep.txt")
+questions_to_keep<-read_csv("questions_to_keep.txt") %>% 
+  filter(axis_flag != "o")
 voter_18 <- voter_18 %>% filter(question %in% questions_to_keep$question)
 
 voter_18 <- voter_18 %>% mutate(answer=as.numeric(answer))
@@ -108,7 +109,7 @@ voter_18x <- voter_18x %>%
 
 # ignore parties_2018 which asks if a third party is needed.
 # ignore faithA_2018 which asks about referenda for everything
-# skip regula_2018
+# skip regula_2018 which asks if regs can prevent another 2018
 
 # +1 is social liberal
 voter_18x <- voter_18x %>%

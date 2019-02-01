@@ -4,9 +4,9 @@ s,immi_makedifficult_2018
 f,tax_goal_federal_2018
 f,govt_reg_2016
 f,regula_2018
-f,CR_careD_2018
-f,parties_2018
-f,faithA_2018
+o,CR_careD_2018
+o,parties_2018
+o,faithA_2018
 s,sexism1_2018
 s,holy_2018
 o,ideo5_2018
