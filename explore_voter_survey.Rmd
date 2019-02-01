@@ -32,7 +32,7 @@ voter_18<- gather(voter_18_raw,"question","answer",
                   {.}
 # make demographic variables factors
 voter_18 <- voter_18 %>%
-  mutate(regzip_2018 %>% as.character(regzip_2018)) %>% 
+  mutate(regzip_2018 =as.character(regzip_2018)) %>% 
   mutate(gender_2018=as.factor(gender_2018)) %>% 
   mutate(race_2018=as.factor(race_2018)) %>% 
   mutate(faminc_new_2018=as.factor(faminc_new_2018)) %>% 
@@ -56,22 +56,24 @@ levels(voter_18$party_2018) <- c("Democrat","Republican","Independent",
                                 "Other","Not Sure")
 
 
-income_key<-read_delim("income_key.csv",delim=";",col_types = "ff",trim_ws = TRUE)
+income_key<-read_csv("income_key.csv",col_types = "ff",trim_ws = TRUE)
 
-voter_18 <- voter_18 %>% mutate(income_2018_000income_key$Label)
+voter_18 <- voter_18 %>% mutate(income_2018_000=income_2018)
+levels(voter_18$income_2018_000)<-levels(income_key$Label)
+voter_18
 
 save(voter_18,file="data/voter_18.rdata")
 ```
-
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
-
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+Look at some of the demographics
 ```{r}
-income_l=levels(voter_18$income_2018) %>% 
-         as.numeric()*10000+10000
 
-income_r=levels(voter_18$income_2018) %>% 
-         as.numeric()*10000+19999
-income_r[income_r>100000]<-income_r[income_r>100000]+10000
+demographics <- voter_18 %>% 
+  distinct(caseid,.keep_all = TRUE) %>% 
+  select(-question,-answer)
+
+demographics %>% group_by(gender_2018) %>%
+  summarise(gender=n())
+
+demographics %>%
+  ggplot(aes(income_2018_000))+geom_bar()
 ```
-
