@@ -1,0 +1,17 @@
+axis_flag,question
+f,trustgovt_2018
+s,immi_makedifficult_2018
+f,tax_goal_federal_2018
+f,govt_reg_2016
+f,regula_2018
+f,CR_careD_2018
+f,parties_2018
+f,faithA_2018
+s,sexism1_2018
+s,holy_2018
+o,ideo5_2018
+s,gaymar_2016
+s,abortview3_2016
+s,third_soc_2018
+f,third_econ_2018
+f,gvmt_involment_2016

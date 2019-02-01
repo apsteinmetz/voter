@@ -1,0 +1,230 @@
+questions do determine axis
+trustgovt_2018
+Trust the government in Washington
+--------------------------------------------------------------------------------
+How much of the time do you think you can trust the government in Washington to
+do what is right?
+Freq. Numeric Label
+100 1 Just about always
+928 2 Most of the time
+4,938 3 Some of the time
+3,368 .
+
+immi_makedifficult_2018
+Hardness for foreigners to immigrate to US
+--------------------------------------------------------------------------------
+Do you think it should be easier or harder for foreigners to immigrate to the US
+legally than it is currently? [randomize option order 1-5 vs. 5-1]
+Freq. Numeric Label
+661 1 Much easier
+1,061 2 Slightly easier
+1,478 3 No change
+1,086 4 Slightly harder
+1,281 5 Much harder
+423 8 Don't know
+3,344 .
+
+tax_goal_federal_2018
+Importance - Reduce the federal deficit
+--------------------------------------------------------------------------------
+REDUCE THE FEDERAL DEFICIT
+Freq. Numeric Label
+3,055 1 Very Important
+2,175 2 Somewhat Important
+510 3 Not very Important
+193 4 Unimportant
+3,401 .
+
+govt_reg_2016
+Amount of regulation of business by the government
+--------------------------------------------------------------------------------
+In general, do you think there is too much or too little regulation of business
+by the government?
+Freq. Numeric Label
+3,473 1 Too much
+1,628 2 About the right amount
+1,999 3 Too little
+871 8 Don't know
+29 .
+
+regula_2018
+New regulations after 2008 cause another financial crisis
+--------------------------------------------------------------------------------
+Would you say that new regulations on Wall Street and the financial industry
+passed since the 2008 financial crisis will make another financial crisis…
+Freq. Numeric Label
+1,213 1 Less likely
+1,194 2 More likely
+1,956 3 Won't make much difference
+1,599 8 Don't know
+3,372 .
+
+CR_careD_2018
+Representative - people like you
+--------------------------------------------------------------------------------
+PEOPLE LIKE YOU
+Freq. Numeric Label
+1,143 1 A great deal
+1,970 2 Some
+1,352 3 Not much
+1,343 4 Not at all
+3,526 .
+3,352 .
+
+parties_2018
+Two parties doing good job
+--------------------------------------------------------------------------------
+In your view, do the Republican and Democratic parties do an adequate job of
+representing the American people, or do they do such a poor job that a third
+major party is needed? [randomize order of responses]
+Freq. Numeric Label
+1,851 1 Do adequate job
+4,036 2 Third party is needed
+3,447 .
+
+faithA_2018
+Agreement - vote on important policy issues
+--------------------------------------------------------------------------------
+Do you agree or disagree with each of these statements? IT WOULD BE BETTER TO
+LET PEOPLE VOTE ON IMPORTANT POLICY ISSUES RATHER THAN LEAVE THEM TO ELECTED
+REPRESENTATIVES. [randomize order of statements]
+Freq. Numeric Label
+1,287 1 Strongly agree
+1,880 2 Somewhat agree
+1,323 3 Neither agree nor disagree
+819 4 Somewhat disagree
+594 5 Strongly disagree
+3,431 .
+
+sexism1_2018
+Gender Roles
+--------------------------------------------------------------------------------
+Please indicate whether you agree, disagree, or neither agree nor disagree with
+each statement: WOMEN SHOULD RETURN TO THEIR TRADITIONAL ROLES IN SOCIETY
+[randomize order of statements]
+Freq. Numeric Label
+332 1 Strongly Agree
+777 2 Somewhat Agree
+1,440 3 Somewhat Disagree
+3,340 4 Strongly Disagree
+3,445 .
+
+holy_2018
+Views about the Holy Scriptures of own religion
+--------------------------------------------------------------------------------
+Which of the following statements comes closest to describing your views about
+the Holy Scriptures of your religion? [randomize order of responses]
+Freq. Numeric Label
+1,341 1 They are the actual word of God
+and should be taken literally,
+word for word
+2,631 2 They are the inspired word of
+God but not everything in them
+should be taken literally
+1,913 3 They are an ancient book of
+fables, legends, history, and
+moral precepts recorded by man
+47
+3,449 .
+
+ideo5_2018
+Ideology
+--------------------------------------------------------------------------------
+In general, how would you describe your own political viewpoint?
+Freq. Numeric Label
+573 1 Very liberal
+984 2 Liberal
+2,067 3 Moderate
+1,383 4 Conservative
+672 5 Very conservative
+324 6 Not sure
+3,331 .
+
+gaymar_2016
+Opinion on gay marriage
+--------------------------------------------------------------------------------
+Do you favor or oppose allowing gays and lesbians to marry legally?
+Freq. Numeric Label
+4,213 1 Favor
+2,809 2 Oppose
+956 8 Don't know
+22 .
+
+view_transgender_2016
+Public restroom usage of Transgender people
+--------------------------------------------------------------------------------
+Which of the following comes closest to your view?
+Freq. Numeric Label
+3,094 1 Should be allow to us the
+restrooms of the gender with
+which they currently identify
+3,525 2 Should be required to use the
+restrooms of the gender they
+were born into
+1,342 8 Don't know
+39 .
+
+abortview3_2016
+View on Abortion
+--------------------------------------------------------------------------------
+Do you think abortion should be...
+140
+Freq. Numeric Label
+2,737 1 Legal in all cases
+3,890 2 Legal/Illegal in some cases
+1,024 3 Illegal in all cases
+328 8 Don't know
+21 .
+
+third_soc_2018
+Third party involve social and cultural issues
+--------------------------------------------------------------------------------
+If you were to vote for a new third party, where would you like it to stand on
+social and cultural issues—like abortion and same-sex marriage?
+Freq. Numeric Label
+974 1 More liberal than the Democratic
+Party
+1,331 2 About where the Democratic Party
+is now
+1,711 3 In between the Democratic Party
+and the Republican Party
+724 4 About where the Republican Party
+is now
+1,140 5 More conservative than the
+Republican Party
+3,454 .
+
+third_econ_2018
+Third party involve economic issues
+--------------------------------------------------------------------------------
+If you were to vote for a new third party, where would you like it to stand on
+economic issues—like how much the government spends and how many services it
+provides?
+Freq. Numeric Label
+30
+894 1 More liberal than the Democratic
+Party
+782 2 About where the Democratic Party
+is now
+2,361 3 In between the Democratic Party
+and the Republican Party
+497 4 About where the Republican Party
+is now
+1,390 5 More conservative than the
+Republican Party
+3,410 .
+
+gvmt_involment_2016
+Role of government in economy
+--------------------------------------------------------------------------------
+Which statement comes closer to your own view?
+Freq. Numeric Label
+3,215 1 We need a strong government to
+handle today's complex economic
+problems
+3,753 2 People would be better able to
+handle today's problems within a
+free market with less government
+involvement
+993 8 Don't know
+39 .
