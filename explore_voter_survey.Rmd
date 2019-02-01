@@ -26,12 +26,18 @@ voter_18<- gather(voter_18_raw,"question","answer",
                   ) %>% as_tibble() %>%
   
   filter(!is.na(caseid)) %>% 
-  filter(str_detect(question,"_2018")) %>% 
+#  filter(str_detect(question,"_2018")) %>% 
   filter(!is.na(answer)) %>% 
   distinct() %>% 
-                  {.}
+  {.}
+
+questions_to_keep<-read_csv("questions_to_keep.txt")
+voter_18 <- voter_18 %>% filter(question %in% questions_to_keep$question)
+
+voter_18 <- voter_18 %>% mutate(answer=as.numeric(answer))
 # make demographic variables factors
 voter_18 <- voter_18 %>%
+  mutate(caseid =as.character(caseid)) %>% 
   mutate(regzip_2018 =as.character(regzip_2018)) %>% 
   mutate(gender_2018=as.factor(gender_2018)) %>% 
   mutate(race_2018=as.factor(race_2018)) %>% 
@@ -75,5 +81,87 @@ demographics %>% group_by(gender_2018) %>%
   summarise(gender=n())
 
 demographics %>%
-  ggplot(aes(income_2018_000))+geom_bar()
+  ggplot(aes(race_2018))+geom_bar()+coord_flip()
 ```
+Rescale question answers 1,2,3 liberal, neutral, conservative in two dimensions. "Don't know" is treated as neutral.
+```{r}
+voter_18<-voter_18 %>% mutate(fiscal=0,social=0)
+# +1 is fiscal liberal
+voter_18x <- voter_18 %>% 
+  mutate(fiscal=ifelse(question=="trustgovt_2018",answer-2,fiscal))
+# +1 is social liberal
+voter_18x <- voter_18x %>%
+  mutate(social=ifelse(question=="immi_makedifficult_2018",(answer-3)*-0.5,social))
+voter_18x <- voter_18x %>%
+  mutate(social=ifelse(question=="immi_makedifficult_2018",
+                       ifelse(answer==8,0,social),social))
+# +1 is fiscal liberal
+voter_18x <- voter_18x %>%
+  mutate(fiscal=ifelse(question=="tax_goal_federal_2018",(answer-2)*0.5,fiscal))
+
+# +1 is fiscal liberal
+voter_18x <- voter_18x %>%
+  mutate(fiscal=ifelse(question=="govt_reg_2016",(answer-2),fiscal))
+voter_18x <- voter_18x %>%
+  mutate(fiscal=ifelse(question=="govt_reg_2016",
+                       ifelse(answer==8,0,fiscal),fiscal))
+
+# ignore parties_2018 which asks if a third party is needed.
+# ignore faithA_2018 which asks about referenda for everything
+# skip regula_2018
+
+# +1 is social liberal
+voter_18x <- voter_18x %>%
+  mutate(social=ifelse(question=="sexism1_2018",(answer-2)*0.5,social))
+
+# +1 is social liberal
+voter_18x <- voter_18x %>%
+  mutate(social=ifelse(question=="holy_2018",(answer-2),social))
+
+# skip ideo5_2018 asks if liberal or conservative
+
+# +1 is social liberal
+voter_18x <- voter_18x %>%
+  mutate(social=ifelse(question=="gaymar_2016",(answer-1)*-1,social))
+voter_18x <- voter_18x %>%
+  mutate(social=ifelse(question=="gaymar_2016",
+                       ifelse(answer==8,0,social),social))
+
+# +1 is social liberal
+voter_18x <- voter_18x %>%
+  mutate(social=ifelse(question=="view_transgender_2016",(answer-1)*-1,social))
+voter_18x <- voter_18x %>%
+  mutate(social=ifelse(question=="view_transgender_2016",
+                       ifelse(answer==8,0,social),social))
+
+# +1 is social liberal
+voter_18x <- voter_18x %>%
+  mutate(social=ifelse(question=="abortview3_2016",(answer-2)*-1,social))
+voter_18x <- voter_18x %>%
+  mutate(social=ifelse(question=="abortview3_2016",
+                       ifelse(answer==8,0,social),social))
+
+# +1 is social liberal
+voter_18x <- voter_18x %>%
+  mutate(social=ifelse(question=="third_soc_2018",(answer-3)*-0.5,social))
+
+# +1 is fiscal liberal
+voter_18x <- voter_18x %>%
+  mutate(fiscal=ifelse(question=="third_econ_2018",(answer-3)*-0.5,fiscal))
+
+# +1 is fiscal liberal
+voter_18x <- voter_18x %>%
+  mutate(fiscal=ifelse(question=="gvmt_involment_2016",(answer-1)*-1,fiscal))
+voter_18x <- voter_18x %>%
+  mutate(fiscal=ifelse(question=="gvmt_involment_2016",
+                       ifelse(answer==8,0,fiscal),fiscal))
+
+
+```
+
+Compute average scores for each caseid
+```{r}
+scores <- voter_18x %>% group_by(caseid) %>% summarise(social=mean(social),fiscal=mean(fiscal))
+ggplot(scores,aes(fiscal,social))+geom_point()
+```
+
