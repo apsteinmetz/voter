@@ -3,7 +3,7 @@ f,trustgovt_2018
 s,immi_makedifficult_2018
 f,tax_goal_federal_2018
 f,govt_reg_2016
-f,regula_2018
+o,regula_2018
 o,CR_careD_2018
 o,parties_2018
 o,faithA_2018

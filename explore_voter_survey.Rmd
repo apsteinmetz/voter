@@ -1,5 +1,5 @@
 ---
-title: "Are there no Libertarians"
+title: "Where are the Libertarians?"
 output: html_notebook
 ---
 
@@ -67,9 +67,14 @@ income_key<-read_csv("income_key.csv",col_types = "ff",trim_ws = TRUE)
 
 voter_18 <- voter_18 %>% mutate(income_2018_000=income_2018)
 levels(voter_18$income_2018_000)<-levels(income_key$Label)
+
+# now make income_2018 continuous again, keeping income_2018_000 as a factor
+# for labelling
+voter_18 <- voter_18 %>% mutate(income_2018=ifelse(income_2018==97,NA,income_2018)) %>%
+                    mutate(income_2018=as.numeric(income_2018))
 voter_18
 
-save(voter_18,file="data/voter_18.rdata")
+#save(voter_18,file="data/voter_18.rdata")
 ```
 Look at some of the demographics
 ```{r}
@@ -84,21 +89,29 @@ demographics %>% group_by(gender_2018) %>%
 demographics %>%
   ggplot(aes(race_2018))+geom_bar()+coord_flip()
 ```
-Rescale question answers 1,2,3 liberal, neutral, conservative in two dimensions. "Don't know" is treated as neutral.
+Rescale question answers to 1,0 and -1, interpreted as liberal, neutral, conservative respectively in two dimensions. "Don't know" (usually coded as 8) is treated as neutral.  Set other axis to NA.
 ```{r}
-voter_18<-voter_18 %>% mutate(fiscal=0,social=0)
+voter_18x<-voter_18 %>% mutate(fiscal=0,social=0)
 # +1 is fiscal liberal
-voter_18x <- voter_18 %>% 
+voter_18x <- voter_18x %>% 
   mutate(fiscal=ifelse(question=="trustgovt_2018",answer-2,fiscal))
+voter_18x <- voter_18x %>% 
+  mutate(social=ifelse(question=="trustgovt_2018",NA,social))
+
 # +1 is social liberal
 voter_18x <- voter_18x %>%
   mutate(social=ifelse(question=="immi_makedifficult_2018",(answer-3)*-0.5,social))
 voter_18x <- voter_18x %>%
   mutate(social=ifelse(question=="immi_makedifficult_2018",
                        ifelse(answer==8,0,social),social))
+voter_18x <- voter_18x %>%
+  mutate(fiscal=ifelse(question=="immi_makedifficult_2018",NA,fiscal))
+
 # +1 is fiscal liberal
 voter_18x <- voter_18x %>%
-  mutate(fiscal=ifelse(question=="tax_goal_federal_2018",(answer-2)*0.5,fiscal))
+  mutate(fiscal=ifelse(question=="tax_goal_federal_2018",(answer-2.5)*(2/3),fiscal))
+voter_18x <- voter_18x %>% 
+  mutate(social=ifelse(question=="tax_goal_federal_2018",NA,social))
 
 # +1 is fiscal liberal
 voter_18x <- voter_18x %>%
@@ -106,34 +119,40 @@ voter_18x <- voter_18x %>%
 voter_18x <- voter_18x %>%
   mutate(fiscal=ifelse(question=="govt_reg_2016",
                        ifelse(answer==8,0,fiscal),fiscal))
-
-# ignore parties_2018 which asks if a third party is needed.
-# ignore faithA_2018 which asks about referenda for everything
-# skip regula_2018 which asks if regs can prevent another 2018
+voter_18x <- voter_18x %>%
+  mutate(social=ifelse(question=="govt_reg_2016",NA,social))
 
 # +1 is social liberal
 voter_18x <- voter_18x %>%
-  mutate(social=ifelse(question=="sexism1_2018",(answer-2)*0.5,social))
+  mutate(social=ifelse(question=="sexism1_2018",(answer-2.5)*(2/3),social))
+voter_18x <- voter_18x %>%
+  mutate(fiscal=ifelse(question=="sexism1_2018",NA,fiscal))
 
 # +1 is social liberal
 voter_18x <- voter_18x %>%
   mutate(social=ifelse(question=="holy_2018",(answer-2),social))
+voter_18x <- voter_18x %>%
+  mutate(fiscal=ifelse(question=="holy_2018",NA,fiscal))
 
 # skip ideo5_2018 asks if liberal or conservative
 
 # +1 is social liberal
 voter_18x <- voter_18x %>%
-  mutate(social=ifelse(question=="gaymar_2016",(answer-1)*-1,social))
+  mutate(social=ifelse(question=="gaymar_2016",(answer-1.5)*-2,social))
 voter_18x <- voter_18x %>%
   mutate(social=ifelse(question=="gaymar_2016",
                        ifelse(answer==8,0,social),social))
+voter_18x <- voter_18x %>%
+  mutate(fiscal=ifelse(question=="gaymar_2016",NA,fiscal))
 
 # +1 is social liberal
 voter_18x <- voter_18x %>%
-  mutate(social=ifelse(question=="view_transgender_2016",(answer-1)*-1,social))
+  mutate(social=ifelse(question=="view_transgender_2016",(answer-1.5)*-2,social))
 voter_18x <- voter_18x %>%
   mutate(social=ifelse(question=="view_transgender_2016",
                        ifelse(answer==8,0,social),social))
+voter_18x <- voter_18x %>%
+  mutate(fiscal=ifelse(question=="view_transgender_2016",NA,fiscal))
 
 # +1 is social liberal
 voter_18x <- voter_18x %>%
@@ -141,14 +160,21 @@ voter_18x <- voter_18x %>%
 voter_18x <- voter_18x %>%
   mutate(social=ifelse(question=="abortview3_2016",
                        ifelse(answer==8,0,social),social))
+voter_18x <- voter_18x %>%
+  mutate(fiscal=ifelse(question=="abortview3_2016",NA,fiscal))
 
 # +1 is social liberal
 voter_18x <- voter_18x %>%
   mutate(social=ifelse(question=="third_soc_2018",(answer-3)*-0.5,social))
+voter_18x <- voter_18x %>%
+  mutate(fiscal=ifelse(question=="third_soc_2018",NA,fiscal))
 
 # +1 is fiscal liberal
 voter_18x <- voter_18x %>%
   mutate(fiscal=ifelse(question=="third_econ_2018",(answer-3)*-0.5,fiscal))
+voter_18x <- voter_18x %>%
+  mutate(social=ifelse(question=="third_econ_2018",NA,social))
+
 
 # +1 is fiscal liberal
 voter_18x <- voter_18x %>%
@@ -156,13 +182,143 @@ voter_18x <- voter_18x %>%
 voter_18x <- voter_18x %>%
   mutate(fiscal=ifelse(question=="gvmt_involment_2016",
                        ifelse(answer==8,0,fiscal),fiscal))
+voter_18x <- voter_18x %>%
+  mutate(social=ifelse(question=="gvmt_involment_2016",NA,social))
 
 
 ```
 
 Compute average scores for each caseid
+```{r message=FALSE, warning=FALSE}
+scores <- voter_18x %>% 
+  group_by(caseid) %>% 
+  summarise(social=mean(social,na.rm = T),fiscal=mean(fiscal,na.rm = T))
+gg <- ggplot(scores,aes(fiscal,social))+geom_point() + geom_jitter()
+gg <- gg + geom_hline(yintercept = 0)
+gg <- gg + geom_vline(xintercept = 0)
+gg <- gg + labs(title="Separation of Social and Fiscal Values",
+                y = "Social Score (Higher=More Liberal)",
+                x = "Fiscal Score (Higher=More Liberal)")
+gg
+```
+
+The first thing to note is the values are all over the chart.  There is not much correlation between the axes.  A linear regression shows statistical insignificance with a p-value of zero but visually you can see the relationship.
 ```{r}
-scores <- voter_18x %>% group_by(caseid) %>% summarise(social=mean(social),fiscal=mean(fiscal))
-ggplot(scores,aes(fiscal,social))+geom_point()
+lm(scores$social~scores$fiscal) %>% broom::tidy()
+```
+
+Sadly, for a libertarian, the scores tend to slightly line up along the 45 degree axis, which means people who are more socially conservative are more likely to be fiscally conservative as well.  The libertarian quadrant is the lower right, which is quite sparesely populated.  Let's count them.
+
+```{r}
+scores <- scores %>% 
+  mutate(fiscal_label=cut(scores$fiscal,c(-1,-0.0001,0.0001,1),
+                      labels=c("Liberal","Neutral","Conservative"))) %>% 
+  mutate(social_label=cut(scores$social,c(-1,-0.0001,0.0001,1),
+                      labels=c("Liberal","Neutral","Conservative")))
+
+xtabs(~fiscal_label+social_label,scores)
+```
+
+The largest quadrant is Conservative/Conservative, followed by Liberal/Liberal.  Leaving out the neutral axes, the liberatarian quadrant is the smallest one.
+
+This is suggestive of traditional party platforms.
+
+How does this look broken out by party?
+```{r message=FALSE, warning=FALSE}
+#Add demographics to scores
+scores <- scores %>% left_join(demographics)
+
+gg <-ggplot(scores,aes(fiscal,social,color=party_2018))+geom_point()
+gg <- gg + geom_hline(yintercept = 0)
+gg <- gg + geom_vline(xintercept = 0)
+gg <- gg + labs(title="Party Lines align with Temperament",
+                y = "Social Score (Higher=More Liberal)",
+                x = "Fiscal Score (Higher=More Liberal)")
+gg
+
+```
+
+There is a clear bifurcation around party, which is exactly what we'd expect.  
+
+We have a number of additional demographic variables but let's just look at one of them.  I encourage you to explore more. How does this look conditioned on income?
+
+```{r message=FALSE, warning=FALSE}
+gg <- scores %>% filter(!is.na(income_2018)) %>%
+  ggplot(aes(income_2018_000,fiscal,group=income_2018)) + geom_boxplot()
+gg <- gg + coord_flip() + theme(axis.text.x = element_text(angle=-90))
+gg <- gg + geom_hline(yintercept = 0,color="red")
+gg <- gg + labs(title="Higher Income Does  Not Make a Fiscal Conservative",
+                x = "Annual Income ($000)",
+                y = "Fiscal Score (Higher=More Liberal)")
+gg
+```
+
+Surprisingly, to me, there is no trend to prefer less government as income rises.  The desire for government involvement in the economy is close to neutral across all income cohorts.
+```{r message=FALSE, warning=FALSE}
+gg <- scores %>% filter(!is.na(income_2018)) %>%
+  ggplot(aes(income_2018_000,social,group=income_2018))+ geom_boxplot()
+
+gg <- gg + coord_flip() + theme(axis.text.x = element_text(angle=-90))
+gg <- gg + geom_hline(yintercept = 0,color="red")
+gg <- gg + labs(title="Higher Income Does Make One More Socially Liberal",
+                x = "Annual Income ($000)",
+                y = "Social Score (Higher=More Liberal)")
+gg
+```
+
+There is some association with more socially liberal views as income rises.  The richer you are, the more tolerant you are of other's lifestyles.  During the 2016 election there was some questioning around why poor people (mainly rural whites) voted "against their economic intrest." This suggests that voting WITH their conservative social interests was more important (I am not saying that our current president embodies conservative social values, or any values at all).  This is relative.  In all income cohorts the median voter is at least a shade liberal on social issues.
+
+## My Last Attempt at Validation
+
+I went through the *YouGov* survey and picked out the questions I feel are relevant, a higly subjective exercise. Even so,the results do not support my hypothesis that most people have libertarian sensibilities.  But there are hints that give me some hope.
+
+First, there is a clear yearning for a choice beyond the existing parties as this question shows:
+
+*In your view, do the Republican and Democratic parties do an adequate job of
+representing the American people, or do they do such a poor job that a third
+major party is needed?*
+
+|Count|Answer|
+|------:|:----------------------|
+| 1,851 | Do adequate job |
+|4,036 | Third party is needed |
+
+The fact that people want another choice tells us nothing about what that choice is.  Another question does seem to provide some libertarian sentiment in excess of what the number of Republicans might indicate:
+
+*In general, do you think there is too much or too little regulation of business
+by the government?*
+
+|Count|Answer|
+|------:|:----------------------|
+3,473 | Too much
+1,628 | About the right amount |
+1,999 | Too little |
+871 | Don't know |
+
+There are two questions in the survey that go explicitly to the separation of social and fiscal values.
+
+*1. If you were to vote for a new third party, where would you like it to stand on
+social and cultural issues—like abortion and same-sex marriage?*
+
+*2. If you were to vote for a new third party, where would you like it to stand on
+economic issues—like how much the government spends and how many services it
+provides?*
+
+Let's re-do the scatter based on the answers to just those questions.
+```{r}
+scores_narrow <- voter_18x %>% 
+  filter(str_detect(question,"third_")) %>%  
+  group_by(caseid) %>% 
+  summarise(social=mean(social,na.rm = T),fiscal=mean(fiscal,na.rm = T)) %>% 
+  left_join(demographics)
+
+gg <- ggplot(scores_narrow,aes(fiscal,social))+geom_point() + geom_jitter()
+gg <- gg + geom_hline(yintercept = 0)
+gg <- gg + geom_vline(xintercept = 0)
+gg <- gg + labs(title="Separation of Social and Fiscal Values",
+                y = "Social Score (Higher=More Liberal)",
+                x = "Fiscal Score (Higher=More Liberal)")
+gg
+
 ```
 

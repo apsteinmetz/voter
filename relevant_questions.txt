@@ -1,9 +1,10 @@
-questions do determine axis
+﻿questions do determine axis
 trustgovt_2018
 Trust the government in Washington
 --------------------------------------------------------------------------------
 How much of the time do you think you can trust the government in Washington to
 do what is right?
+FISCAL, SUBTRACT 2
 Freq. Numeric Label
 100 1 Just about always
 928 2 Most of the time
@@ -15,6 +16,7 @@ Hardness for foreigners to immigrate to US
 --------------------------------------------------------------------------------
 Do you think it should be easier or harder for foreigners to immigrate to the US
 legally than it is currently? [randomize option order 1-5 vs. 5-1]
+SOCIAL, SUBTRACT 3 DIVIDE BY -2 SET 8 TO ZERO
 Freq. Numeric Label
 661 1 Much easier
 1,061 2 Slightly easier
@@ -28,6 +30,7 @@ tax_goal_federal_2018
 Importance - Reduce the federal deficit
 --------------------------------------------------------------------------------
 REDUCE THE FEDERAL DEFICIT
+FISCAL, SUBTRACT 2.5, MULTIPLY BY 2/3
 Freq. Numeric Label
 3,055 1 Very Important
 2,175 2 Somewhat Important
@@ -40,6 +43,7 @@ Amount of regulation of business by the government
 --------------------------------------------------------------------------------
 In general, do you think there is too much or too little regulation of business
 by the government?
+FISCAL, SUBTRACT 2 SET 8 TO ZERO
 Freq. Numeric Label
 3,473 1 Too much
 1,628 2 About the right amount
@@ -52,6 +56,7 @@ New regulations after 2008 cause another financial crisis
 --------------------------------------------------------------------------------
 Would you say that new regulations on Wall Street and the financial industry
 passed since the 2008 financial crisis will make another financial crisis…
+OTHER, SUBTRACT 2 SET 8 TO ZERO
 Freq. Numeric Label
 1,213 1 Less likely
 1,194 2 More likely
@@ -63,6 +68,7 @@ CR_careD_2018
 Representative - people like you
 --------------------------------------------------------------------------------
 PEOPLE LIKE YOU
+OTHER, SUBTRACT 2.5 MULTIPLY BY 2/3
 Freq. Numeric Label
 1,143 1 A great deal
 1,970 2 Some
@@ -77,6 +83,7 @@ Two parties doing good job
 In your view, do the Republican and Democratic parties do an adequate job of
 representing the American people, or do they do such a poor job that a third
 major party is needed? [randomize order of responses]
+OTHER, SUBTRACT 1.5, MULTIPLY BY 2
 Freq. Numeric Label
 1,851 1 Do adequate job
 4,036 2 Third party is needed
@@ -88,6 +95,7 @@ Agreement - vote on important policy issues
 Do you agree or disagree with each of these statements? IT WOULD BE BETTER TO
 LET PEOPLE VOTE ON IMPORTANT POLICY ISSUES RATHER THAN LEAVE THEM TO ELECTED
 REPRESENTATIVES. [randomize order of statements]
+OTHER, SUBTRACT 3 DIVIDE BY 2
 Freq. Numeric Label
 1,287 1 Strongly agree
 1,880 2 Somewhat agree
@@ -102,6 +110,7 @@ Gender Roles
 Please indicate whether you agree, disagree, or neither agree nor disagree with
 each statement: WOMEN SHOULD RETURN TO THEIR TRADITIONAL ROLES IN SOCIETY
 [randomize order of statements]
+SOCIAL, SUBTRACT 2.5, MULTIPLY BY 2/3
 Freq. Numeric Label
 332 1 Strongly Agree
 777 2 Somewhat Agree
@@ -131,6 +140,8 @@ ideo5_2018
 Ideology
 --------------------------------------------------------------------------------
 In general, how would you describe your own political viewpoint?
+OTHER, SUBTRACT 3 DIVIDE BY 2
+
 Freq. Numeric Label
 573 1 Very liberal
 984 2 Liberal
@@ -144,6 +155,7 @@ gaymar_2016
 Opinion on gay marriage
 --------------------------------------------------------------------------------
 Do you favor or oppose allowing gays and lesbians to marry legally?
+SOCIAL, SUBTRACT 1.5 MULTIPLY BY -2
 Freq. Numeric Label
 4,213 1 Favor
 2,809 2 Oppose
@@ -154,6 +166,7 @@ view_transgender_2016
 Public restroom usage of Transgender people
 --------------------------------------------------------------------------------
 Which of the following comes closest to your view?
+SOCIAL, SUBTRACT 1.5 MULTIPLY BY -2
 Freq. Numeric Label
 3,094 1 Should be allow to us the
 restrooms of the gender with
@@ -169,6 +182,7 @@ View on Abortion
 --------------------------------------------------------------------------------
 Do you think abortion should be...
 140
+SOCIAL, SUBTRACT 2 MULTIPLY BY -1
 Freq. Numeric Label
 2,737 1 Legal in all cases
 3,890 2 Legal/Illegal in some cases
@@ -181,6 +195,7 @@ Third party involve social and cultural issues
 --------------------------------------------------------------------------------
 If you were to vote for a new third party, where would you like it to stand on
 social and cultural issues—like abortion and same-sex marriage?
+SOCIAL, SUBTRACT 3 MULTIPLY BY -0.5
 Freq. Numeric Label
 974 1 More liberal than the Democratic
 Party
