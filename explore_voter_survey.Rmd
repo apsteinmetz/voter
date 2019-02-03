@@ -291,17 +291,19 @@ gg <- gg + labs(title="Separation of Social and Fiscal Values",
 gg <- gg + annotate("text",x=0.7,y=-1.0,color="red",
                     label=paste("Mean Fiscal=",round(mean_fiscal,2),
                                 "Mean Social=",round(mean_social,2)))
-gg
+gg + geom_smooth()
 ```
 
-The first thing to note is the values are all over the chart.  There is not much correlation between the axes.  A linear regression shows no statistical significance with a p-value of zero but visually you can see the relationship.  Additionally, you can see that the center of the distribution lies a bit to the north of zero, socially liberal.  Has the country moved more in this direction over the years?  
+The first thing to note is the values are all over the chart.  There is not much correlation between the axes.  As a side note, we've added some random "jitter" noise to the position of each point with `geom_jitter()`.  Otherwise, many of the points would overlap and obscure the density of the points.
 
-As a side note, we've added some random "jitter" noise to the position of each point with `geom_jitter()`.  Otherwise, many of the points would overlap and obscure the density of the points.
+Sadly, for a libertarian, the scores tend to slightly line up along the 45 degree axis, which means people who are more socially conservative are more likely to be fiscally conservative as well.  The libertarian quadrant is the upper left, which is more sparseley populated.
+A linear regression is not much use in predicting voter attitudes.
+
 ```{r}
 lm(scores$social~scores$fiscal) %>% broom::tidy()
 ```
 
-Sadly, for a libertarian, the scores tend to slightly line up along the 45 degree axis, which means people who are more socially conservative are more likely to be fiscally conservative as well.  The libertarian quadrant is the upper left, which is quite sparseley populated.  Let's count them.
+Let's count voter incidence in each quadrant.
 
 ```{r}
 scores <- scores %>% 
@@ -320,9 +322,9 @@ This is suggestive of traditional party platforms so how does this look broken o
 
 gg <-ggplot(scores,aes(fiscal,social,color=party_2018))+geom_point()
 gg <- gg +  geom_jitter(width=0.2,height=0.1)
-gg <- gg + geom_hline(yintercept = 0)
-gg <- gg + geom_vline(xintercept = 0)
-gg <- gg + annotate("text",label=c("Libertarian"),x=-0.9,y=0.9)
+gg <- gg + geom_hline(yintercept = 0,color="red")
+gg <- gg + geom_vline(xintercept = 0,color="red")
+gg <- gg + annotate("text",label=c("Libertarian"),x=-0.9,y=0.9,color="red")
 gg <- gg + labs(title="Party Lines align with Temperament",
                 y = "Social Score (Higher=More Liberal)",
                 x = "Fiscal Score (Higher=More Liberal)")
@@ -338,9 +340,9 @@ The survey respondents are overwhelmingly white. What does the plot look like if
 gg <- scores %>% filter(race_2018 != "White") %>% 
   ggplot(aes(fiscal,social,color=race_2018))+geom_point()
 gg <- gg +  geom_jitter(width=0.2,height=0.1)
-gg <- gg + geom_hline(yintercept = 0)
-gg <- gg + geom_vline(xintercept = 0)
-gg <- gg + annotate("text",label=c("Libertarian"),x=-0.9,y=0.9)
+gg <- gg + geom_hline(yintercept = 0,color="red")
+gg <- gg + geom_vline(xintercept = 0,color="red")
+gg <- gg + annotate("text",label=c("Libertarian"),x=-0.9,y=0.9,color="red")
 gg <- gg + labs(title="Minorities Are Not Too Different from Whites",
                 y = "Social Score (Higher=More Liberal)",
                 x = "Fiscal Score (Higher=More Liberal)")
