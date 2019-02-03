@@ -2,16 +2,51 @@
 title: "Where are the Libertarians?"
 output: html_notebook
 ---
+## *...Or, How I Discovered My Cherished Beliefs Were Totally Wrong*
 
-load libararies and files
+At the risk of losing half my readers in the first paragraph, I'll share my political views.  Generally, I believe in "free people and free markets."  That makes me a small-L libertarian.  I find it useful to think of, not a political spectrum from left to right, but a compass with four points.  People have distinct views on social issues that may be separate from their views on government's role in the economy.  The traditional political party platforms don't capture that nuance. There is no room in the Democratic or Republican Parties for a right-to-life person who also wants universal health care.
+
+I have always assumed, that free of the shackles of traditional party labels, most Americans are tolerant of people with different lifestyles than their own.  At the same time we mostly believe that private markets do a better job of allocating resources than government bureaucrats.  *YOU* may not belive that but, as I said, that's been my working assumption.
 
 
 ```{r message=FALSE, warning=FALSE}
+# load libararies and files
 library(tidyverse)
 voter_18_raw <- read_csv("data/VOTER_Survey_April18_Release1.csv")
 ```
+Out of the dozens of questions the survey asked, I pulled out those which seemed to go to the separate dimensions of the conservative/liberal spectrum. The questions involved:
 
-Massage the data
+**Fiscal Issues**
+
+Trust of the government in Washington
+
+Amount of regulation of business by the government
+
+Importance of reducing the federal deficit
+
+Role of government in economy
+
+Desire of third party position on economic issues
+
+**Social Issues**
+
+Hardness for foreigners to immigrate to US
+
+Gender Roles
+
+Views about the Holy Scriptures of own religion
+
+Opinion on gay marriage
+
+Public restroom usage of Transgender people
+
+View on Abortion
+
+Desire of third party position on social and cultural issues
+
+## Arrange the Data
+Now we massage the raw data a few ways.  First we `gather()` the data to group the interesting demographic features as separate variables and tidy up all the questions and answers into two variables.
+
 ```{r message=FALSE, warning=FALSE}
 
 
@@ -21,7 +56,6 @@ voter_18<- gather(voter_18_raw,"question","answer",
                   -race_2018,
                   -gender_2018,
                   -faminc_new_2018,
-                  -regzip_2018,
                   -inputstate_2018
                   ) %>% as_tibble() %>%
   
@@ -39,7 +73,6 @@ voter_18 <- voter_18 %>% mutate(answer=as.numeric(answer))
 # make demographic variables factors
 voter_18 <- voter_18 %>%
   mutate(caseid =as.character(caseid)) %>% 
-  mutate(regzip_2018 =as.character(regzip_2018)) %>% 
   mutate(gender_2018=as.factor(gender_2018)) %>% 
   mutate(race_2018=as.factor(race_2018)) %>% 
   mutate(faminc_new_2018=as.factor(faminc_new_2018)) %>% 
@@ -69,14 +102,14 @@ voter_18 <- voter_18 %>% mutate(income_2018_000=income_2018)
 levels(voter_18$income_2018_000)<-levels(income_key$Label)
 
 # now make income_2018 continuous again, keeping income_2018_000 as a factor
-# for labelling
+# for labeling
 voter_18 <- voter_18 %>% mutate(income_2018=ifelse(income_2018==97,NA,income_2018)) %>%
                     mutate(income_2018=as.numeric(income_2018))
 voter_18
 
 #save(voter_18,file="data/voter_18.rdata")
 ```
-Look at some of the demographics
+Look at some of the demographics.
 ```{r}
 
 demographics <- voter_18 %>% 
@@ -84,12 +117,14 @@ demographics <- voter_18 %>%
   select(-question,-answer)
 
 demographics %>% group_by(gender_2018) %>%
-  summarise(gender=n())
-
+  summarise(count=n())
+```
+```{r}
 demographics %>%
   ggplot(aes(race_2018))+geom_bar()+coord_flip()
 ```
-Rescale question answers to 1,0 and -1, interpreted as liberal, neutral, conservative respectively in two dimensions. "Don't know" (usually coded as 8) is treated as neutral.  Set other axis to NA.
+
+The final step in massaging the data is to rescale all the question answers to between one and minus one, interpreted as liberal to conservative, respectively, in two dimensions. "Don't know" (usually coded as 8) is treated as neutral (zero).  "Decline to answer" (coded as 97) is set to `NA`.   If the question is "fiscal", set "social" to `NA` and vice versa.
 ```{r}
 voter_18x<-voter_18 %>% mutate(fiscal=0,social=0)
 # +1 is fiscal liberal
@@ -187,27 +222,34 @@ voter_18x <- voter_18x %>%
 
 
 ```
-
-Compute average scores for each caseid
+Now we have values that we can aggregate for each question. They are all normaized and given equal weight. Should each question be given equal weight?  I don't know, but now we can compute average scores for each `caseid`. We also add the demographic features to each observation.  So now every `caseid` (voter) in the survey is assigned and fiscal and social temperament score. 
 ```{r message=FALSE, warning=FALSE}
 scores <- voter_18x %>% 
   group_by(caseid) %>% 
-  summarise(social=mean(social,na.rm = T),fiscal=mean(fiscal,na.rm = T))
-gg <- ggplot(scores,aes(fiscal,social))+geom_point() + geom_jitter()
+  summarise(social=mean(social,na.rm = T),fiscal=mean(fiscal,na.rm = T)) %>% 
+  left_join(demographics)   #Add demographics to scores
+```
+With our data all cleaned up, let's look at some pictures!
+```{r message=FALSE, warning=FALSE}
+gg <- ggplot(scores,aes(fiscal,social)) + geom_point()
+gg <- gg +  geom_jitter(width=0.2,height=0.1)
 gg <- gg + geom_hline(yintercept = 0)
 gg <- gg + geom_vline(xintercept = 0)
+gg <- gg + annotate("text",label=c("Libertarian"),x=-0.9,y=0.9)
 gg <- gg + labs(title="Separation of Social and Fiscal Values",
                 y = "Social Score (Higher=More Liberal)",
                 x = "Fiscal Score (Higher=More Liberal)")
 gg
 ```
 
-The first thing to note is the values are all over the chart.  There is not much correlation between the axes.  A linear regression shows statistical insignificance with a p-value of zero but visually you can see the relationship.
+The first thing to note is the values are all over the chart.  There is not much correlation between the axes.  A linear regression shows no statistical significance with a p-value of zero but visually you can see the relationship.  Additionally, you can see that the center of the distribution lies a bit to the north of zero, socially liberal.  Has the country moved more in this direction over the years?  
+
+As a side note, we've added some random "jitter" noise to the position of each point with `geom_jitter()`.  Otherwise, many of the points would overlap and obscure the density of the points.
 ```{r}
 lm(scores$social~scores$fiscal) %>% broom::tidy()
 ```
 
-Sadly, for a libertarian, the scores tend to slightly line up along the 45 degree axis, which means people who are more socially conservative are more likely to be fiscally conservative as well.  The libertarian quadrant is the lower right, which is quite sparesely populated.  Let's count them.
+Sadly, for a libertarian, the scores tend to slightly line up along the 45 degree axis, which means people who are more socially conservative are more likely to be fiscally conservative as well.  The libertarian quadrant is the upper left, which is quite sparseley populated.  Let's count them.
 
 ```{r}
 scores <- scores %>% 
@@ -219,18 +261,16 @@ scores <- scores %>%
 xtabs(~fiscal_label+social_label,scores)
 ```
 
-The largest quadrant is Conservative/Conservative, followed by Liberal/Liberal.  Leaving out the neutral axes, the liberatarian quadrant is the smallest one.
+The largest quadrant is Conservative/Conservative, followed by Liberal/Liberal.  Leaving out the neutral axes, the libertarian quadrant (liberal social, conservative fiscal) is the smallest one.
 
-This is suggestive of traditional party platforms.
-
-How does this look broken out by party?
+This is suggestive of traditional party platforms so how does this look broken out by party?
 ```{r message=FALSE, warning=FALSE}
-#Add demographics to scores
-scores <- scores %>% left_join(demographics)
 
 gg <-ggplot(scores,aes(fiscal,social,color=party_2018))+geom_point()
+gg <- gg +  geom_jitter(width=0.2,height=0.1)
 gg <- gg + geom_hline(yintercept = 0)
 gg <- gg + geom_vline(xintercept = 0)
+gg <- gg + annotate("text",label=c("Libertarian"),x=-0.9,y=0.9)
 gg <- gg + labs(title="Party Lines align with Temperament",
                 y = "Social Score (Higher=More Liberal)",
                 x = "Fiscal Score (Higher=More Liberal)")
@@ -240,7 +280,7 @@ gg
 
 There is a clear bifurcation around party, which is exactly what we'd expect.  
 
-We have a number of additional demographic variables but let's just look at one of them.  I encourage you to explore more. How does this look conditioned on income?
+We have a number of additional demographic variables but let's just look at one of them.  I encourage you to explore more. How do scores look conditioned on income?
 
 ```{r message=FALSE, warning=FALSE}
 gg <- scores %>% filter(!is.na(income_2018)) %>%
@@ -253,7 +293,7 @@ gg <- gg + labs(title="Higher Income Does  Not Make a Fiscal Conservative",
 gg
 ```
 
-Surprisingly, to me, there is no trend to prefer less government as income rises.  The desire for government involvement in the economy is close to neutral across all income cohorts.
+Surprisingly, to me, there is no trend to prefer less government as income rises.  The desire for government involvement in the economy is close to neutral across all income cohorts.  Note, I did not include any tax questions for this measure.  People are happy to favor higher taxes on anybody who makes more money than they do.
 ```{r message=FALSE, warning=FALSE}
 gg <- scores %>% filter(!is.na(income_2018)) %>%
   ggplot(aes(income_2018_000,social,group=income_2018))+ geom_boxplot()
@@ -266,11 +306,11 @@ gg <- gg + labs(title="Higher Income Does Make One More Socially Liberal",
 gg
 ```
 
-There is some association with more socially liberal views as income rises.  The richer you are, the more tolerant you are of other's lifestyles.  During the 2016 election there was some questioning around why poor people (mainly rural whites) voted "against their economic intrest." This suggests that voting WITH their conservative social interests was more important (I am not saying that our current president embodies conservative social values, or any values at all).  This is relative.  In all income cohorts the median voter is at least a shade liberal on social issues.
+There is some association with more socially liberal views as income rises.  The richer you are, the more tolerant you are of other's lifestyles, I guess.  During the 2016 election there was some questioning around why poor people (mainly rural whites) voted "against their economic intrest." This suggests that voting WITH their conservative social interests was more important (I am not saying that our current president embodies conservative social values, or any values at all).  This is relative.  In all income cohorts the median voter is at least a shade liberal on social issues.
 
 ## My Last Attempt at Validation
 
-I went through the *YouGov* survey and picked out the questions I feel are relevant, a higly subjective exercise. Even so,the results do not support my hypothesis that most people have libertarian sensibilities.  But there are hints that give me some hope.
+I went through the *YouGov* survey and picked out the questions I feel are relevant, a higly subjective exercise. Even so,the results do not support my hypothesis that many people have libertarian sensibilities.  But there were hints that gave me some hope.
 
 First, there is a clear yearning for a choice beyond the existing parties as this question shows:
 
@@ -283,19 +323,19 @@ major party is needed?*
 | 1,851 | Do adequate job |
 |4,036 | Third party is needed |
 
-The fact that people want another choice tells us nothing about what that choice is.  Another question does seem to provide some libertarian sentiment in excess of what the number of Republicans might indicate:
+The fact that most people want another choice tells us nothing about what that choice is.  Another question does seem to suggest libertarian sentiment in excess of what the number of Republicans might indicate:
 
 *In general, do you think there is too much or too little regulation of business
 by the government?*
 
 |Count|Answer|
-|------:|:----------------------|
+|------:|:-----------|
 3,473 | Too much
 1,628 | About the right amount |
 1,999 | Too little |
 871 | Don't know |
 
-There are two questions in the survey that go explicitly to the separation of social and fiscal values.
+Finally, there are two questions in the survey that go explicitly to the separation of social and fiscal values.
 
 *1. If you were to vote for a new third party, where would you like it to stand on
 social and cultural issues—like abortion and same-sex marriage?*
@@ -304,21 +344,39 @@ social and cultural issues—like abortion and same-sex marriage?*
 economic issues—like how much the government spends and how many services it
 provides?*
 
-Let's re-do the scatter based on the answers to just those questions.
-```{r}
+The range of answers for both is:
+
+|Score| Answer |
+|------:|:----------------------|
+| 1.0 | More liberal than the Democratic Party|
+| 0.5 | About where the Democratic Party is now|
+| 0.0 | In between the Democratic Party and the Republican Party|
+| -0.5 | About where the Republican Party is now|
+| -1.0 | More conservative than the Republican Party|
+
+Let's re-do the scatter based on the answers to just those two questions.  Since we are using only two questions with possible values of only 1,0 and minus 1, there are many more respondents than possible values.  Again we add some random jitter to make the density clear.  The reuslt is a visual crosstab. I quite like the effect.
+```{r message=FALSE, warning=FALSE}
 scores_narrow <- voter_18x %>% 
   filter(str_detect(question,"third_")) %>%  
   group_by(caseid) %>% 
   summarise(social=mean(social,na.rm = T),fiscal=mean(fiscal,na.rm = T)) %>% 
   left_join(demographics)
 
-gg <- ggplot(scores_narrow,aes(fiscal,social))+geom_point() + geom_jitter()
+gg <- ggplot(scores_narrow,aes(fiscal,social,color=party_2018))+geom_point() + geom_jitter()
 gg <- gg + geom_hline(yintercept = 0)
 gg <- gg + geom_vline(xintercept = 0)
-gg <- gg + labs(title="Separation of Social and Fiscal Values",
+gg <- gg + labs(title="What Kind of Third Party Would Voters Prefer?",
                 y = "Social Score (Higher=More Liberal)",
                 x = "Fiscal Score (Higher=More Liberal)")
+gg <- gg + annotate("text",label=c("Libertarian"),x=-0.9,y=0.9)
+gg <- gg + annotate("text",label=c("No Label?"),x=0.9,y=-0.9)
+gg <- gg + annotate("text",label=c("Left of Democrats"),x=0.9,y=0.9)
+gg <- gg + annotate("text",label=c("Right of Republicans"),x=-0.9,y=-0.9)
 gg
 
 ```
 
+What I don't like is the result.  Contrary to my pre-conceived notion, it's clear the American electorate is not crypto-libertarian.  Rather, voters want a third party that is highly centrist or highly polarized along traditional liberal/conservative lines.  This makes it unlikely that any single third party could be successful at the ballot box.  Rather, both an extreme left-wing and an extreme right wing party could take votes away from the traditional parties.
+
+## Conclusion
+I started this exercise hoping to find some support for my personal views among the broader electorate.  Sadly, I didn't find it, but the fun of data science is finding things you didn't expect and in validating or refuting hunches and feelings with good science. I know something today I didn't know yesterday so I'll call it a win!
