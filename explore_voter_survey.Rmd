@@ -6,7 +6,15 @@ output: html_notebook
 
 At the risk of losing half my readers in the first paragraph, I'll share my political views.  Generally, I believe in "free people and free markets."  That makes me a small-L libertarian.  I find it useful to think of, not a political spectrum from left to right, but a compass with four points.  People have distinct views on social issues that may be separate from their views on government's role in the economy.  The traditional political party platforms don't capture that nuance. There is no room in the Democratic or Republican Parties for a right-to-life person who also wants universal health care.
 
-I have always assumed, that free of the shackles of traditional party labels, most Americans are tolerant of people with different lifestyles than their own.  At the same time we mostly believe that private markets do a better job of allocating resources than government bureaucrats.  *YOU* may not belive that but, as I said, that's been my working assumption.
+I have always assumed, that free of the shackles of traditional party labels, most Americans are tolerant of people with different lifestyles than their own.  At the same time we mostly believe that private markets do a better job of allocating resources than government bureaucrats.  *YOU* may not belive that but, as I said, that's been my working assumption about most people.  We're mostly libertarians under the skin.
+
+Last week the founder of Starbucks announced his candidacy for President.  [This article](https://www.nytimes.com/2019/01/30/upshot/could-howard-schultz-help-re-elect-the-president.html) in the *New York Times* suggested he has centrist appeal but that group might be smaller than "he realizes."  The article goes on to say:
+
+>These dissatisfied centrist voters fit the profile of affluent, socially moderate and fiscally conservative suburban voters. They are twice as likely to make more than $100,000 per year than voters who have a favorable view of a party, and 78 percent of these voters say Democrats “too often see government as the only way to solve problems.”
+
+>Mr. Schultz could certainly play to these voters, but it is not a particularly electorally fruitful group. In an analysis of the Voter Study Group, Lee Drutman, a political scientist, found that just 4 percent of voters were conservative on economic issues and liberal on cultural issues. In comparison, populists represented 29 percent of the 2018 electorate. Mr. Schultz’s candidacy might be the reverse of Mr. Perot’s, but Mr. Perot’s pitch probably had broader appeal.
+
+
 
 
 ```{r message=FALSE, warning=FALSE}
@@ -369,7 +377,7 @@ gg <- gg + labs(title="What Kind of Third Party Would Voters Prefer?",
                 y = "Social Score (Higher=More Liberal)",
                 x = "Fiscal Score (Higher=More Liberal)")
 gg <- gg + annotate("text",label=c("Libertarian"),x=-0.9,y=0.9)
-gg <- gg + annotate("text",label=c("No Label?"),x=0.9,y=-0.9)
+gg <- gg + annotate("text",label=c("Populist?"),x=0.9,y=-0.9)
 gg <- gg + annotate("text",label=c("Left of Democrats"),x=0.9,y=0.9)
 gg <- gg + annotate("text",label=c("Right of Republicans"),x=-0.9,y=-0.9)
 gg
