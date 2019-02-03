@@ -250,27 +250,45 @@ voter_18_scaled <- voter_18_scaled %>%
 #save(voter_18_scaled,file="data/voter_18_scaled.rdata")
 
 ```
-Now we have values that we can aggregate for each question. They are all normaized and given equal weight. Should each question be given equal weight?  I don't know, but now we can compute average scores for each `caseid`. We also add the demographic features to each observation.  So now every `caseid` (voter) in the survey is assigned and fiscal and social temperament score. 
+Now we have values that we can aggregate for each question. They are all normaized and given equal weight. Should each question be given equal weight?  I don't know, but now we can compute average scores for each `caseid` (voter) . We also add the demographic features to each observation.  So now every `caseid` in the survey is assigned and fiscal and social temperament score. 
 ```{r message=FALSE, warning=FALSE}
 scores <- voter_18_scaled %>% 
   group_by(caseid) %>% 
   summarise(social=mean(social,na.rm = T),fiscal=mean(fiscal,na.rm = T)) %>% 
   left_join(demographics)   #Add demographics to scores
+```
+Let's start off at the highest level.  What are the mean values for each dimension?
 
+
+```{r}
 mean_social <- mean(scores$social,na.rm = T)
 mean_fiscal <- mean(scores$fiscal,na.rm = T)
+print(paste("Mean Fiscal=",round(mean_fiscal,2),
+            "Mean Social=",round(mean_social,2)))
 ```
+Well that is an encouraging start.  The signs are in the libertarian quadrant, anyway. But are they statistically significant?  Specifically, can we reject the hypothesis that the true mean is greater than zero for social, and less than zero for fiscal?
+```{r}
+t_s <-t.test(scores$social,mu=0,conf.level = 0.99,alternative="greater") %>% broom::tidy()
+t_f <-t.test(scores$fiscal,mu=0,conf.level = 0.99,alternative="less") %>% broom::tidy()
+t_both<-bind_cols(Dimension=c("Social","Fiscal"),bind_rows(t_s,t_f)) %>% 
+  select(Dimension,estimate,statistic,conf99.low=conf.low,conf99.high=conf.high)
+t_both
+
+```
+
+With such a large sample size we can be pretty confident that the true mean is close to the sample mean and therefore leans libertarian.  Alas, that is not enough to form an opinion.  The magnitudes are still very small and a slight relative shift in the aggregate may not support my hypothesis that most people have a libertarian bias when you break down the issues.
+
 With our data all cleaned up, let's look at some pictures!
 ```{r message=FALSE, warning=FALSE}
 gg <- ggplot(scores,aes(fiscal,social)) + geom_point()
 gg <- gg +  geom_jitter(width=0.2,height=0.1)
-gg <- gg + geom_hline(yintercept = 0)
-gg <- gg + geom_vline(xintercept = 0)
-gg <- gg + annotate("text",label=c("Libertarian"),x=-0.9,y=0.9)
+gg <- gg + geom_hline(yintercept = 0,color="red")
+gg <- gg + geom_vline(xintercept = 0,color="red")
+gg <- gg + annotate("text",label=c("Libertarian"),x=-0.9,y=0.9,color="red")
 gg <- gg + labs(title="Separation of Social and Fiscal Values",
                 y = "Social Score (Higher=More Liberal)",
                 x = "Fiscal Score (Higher=More Liberal)")
-gg <- gg + annotate("text",x=0.7,y=-1.0,
+gg <- gg + annotate("text",x=0.7,y=-1.0,color="red",
                     label=paste("Mean Fiscal=",round(mean_fiscal,2),
                                 "Mean Social=",round(mean_social,2)))
 gg
