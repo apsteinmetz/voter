@@ -5,10 +5,6 @@ output: html_notebook
 
 ### *...or...*
 
-### *How I Discovered My Cherished Beliefs Were Totally Wrong*
-
-### *...or...*
-
 ### *The Tough Road Ahead for Howard Schultz* 
 
 At the risk of losing half my readers in the first paragraph, I'll share my political views.  Generally, I believe in "free people and free markets."  That makes me a small-L libertarian.  I find it useful to think of, not a political spectrum from left to right, but a compass with four points.  People have distinct views on social issues that may be separate from their views on government's role in the economy.  The traditional political party platforms don't capture that nuance. There is no room in the Democratic or Republican Parties for a right-to-life person who also wants universal health care.
@@ -21,9 +17,11 @@ Last week the founder of Starbucks announced his candidacy for President.  [This
 
 >Mr. Schultz could certainly play to these voters, but it is not a particularly electorally fruitful group. In an analysis of the Voter Study Group, Lee Drutman, a political scientist, found that just 4 percent of voters were conservative on economic issues and liberal on cultural issues. In comparison, populists represented 29 percent of the 2018 electorate. Mr. Schultz’s candidacy might be the reverse of Mr. Perot’s, but Mr. Perot’s pitch probably had broader appeal.
 
-I read the [article by Lee Drutman](https://www.voterstudygroup.org/publications/2016-elections/political-divisions-in-2016-and-beyond) referenced by The Times and was discouraged to see little support for libertarian positioning in the 2016 survey of voters by [](YouGov.com).  Fortunately, the raw data is all available and provides a rich trove for exploration.  This survey was updated in December 2018 and the data can be found [here.](https://www.voterstudygroup.org/publications/2018-voter-survey/2018-voter-survey-top-lines).   This will be the starting point for our analysis.  The survey results are a CSV file in a zipped package.  The file is in my Github repo but, as a matter of courtesy, please request it from The Voter Study Group, as their usage terms stipulate.
+Then I read the [article by Lee Drutman](https://www.voterstudygroup.org/publications/2016-elections/political-divisions-in-2016-and-beyond) referenced by The Times and was discouraged to see little support for libertarian positioning in the 2016 survey of voters by [YouGov.com](YouGov.com).  Fortunately, the raw data is all available.  This survey was updated in December 2018 and the data can be found [here.](https://www.voterstudygroup.org/publications/2018-voter-survey/2018-voter-survey-top-lines).   
 
-As always, we will be working in the **Tidyverse** dialect.  Start by loading in the raw data. As a matter of style, I like to keep a raw data frame in pristine form and manipulate a copy so if I mess up I can always restart the data munging from the same base.  If memory allows, additional intermediate versions might be helpful.
+This data set looked like the perfect opportunity to see if my sensiblities are widely shared.  In the process we will learn how to pick apart this data set. Any policial junkie will find the huge number of questions a rich trove for exploration of all kinds. The survey results are a CSV file in a zipped package.  The file is in my Github repo but, as a matter of courtesy, please request it from The Voter Study Group, as their usage terms stipulate.
+
+Start by loading in the raw data. As a matter of style, I like to keep a raw data frame in pristine form and manipulate a copy so if I mess up I can always restart the data munging from the same base.  If memory allows, additional intermediate versions might be helpful. As always, we will be working in the **Tidyverse** dialect.
 
 ```{r message=FALSE, warning=FALSE}
 # load libararies and files
@@ -37,7 +35,7 @@ voter_18_raw <- read_csv("data/VOTER_Survey_April18_Release1.csv")
 ```
 ## Choose the Questions to Use
 
-I thought that Mr. Drutman's own biases might affect his culling of questions and scaling to test the pervalence of libertarian attitudes.  I hoped that selecting my own set of questions narrowly focused on the relevant issues might provide more support for my point of view.  So, to be honest, I went into this with a preconceived notion of the answer I wanted to get.
+I thought that Mr. Drutman's own biases might affect his culling of questions and scaling to test the pervalence of libertarian attitudes.  I hoped that selecting my own set of questions narrowly focused on the relevant issues might provide more support for my point of view.  So, to be honest, I went into this with a preconceived notion of the answer I wanted to get.  Beware.
 
 Out of the dozens of questions the survey asked, I pulled out those which seemed to go to the separate dimensions of the conservative/liberal spectrum. The questions involved:
 
@@ -57,9 +55,9 @@ Out of the dozens of questions the survey asked, I pulled out those which seemed
   + View on Abortion
   + Desired third party position on social and cultural issues
 
-## Arrange the Data
+## Pull Out Demographic Features
 
-Now we massage the raw data a few ways.  First we `gather()` the data to group the interesting demographic features as separate variables and tidy up all the questions and answers into two variables.
+Now we massage the raw data a few ways.  First we `gather()` the data to group the interesting demographic features as separate variables and tidy up all the remaining questions and answers into two variables.
 
 ```{r message=FALSE, warning=FALSE}
 
@@ -71,13 +69,11 @@ voter_18<- gather(voter_18_raw,"question","answer",
                   -gender_2018,
                   -faminc_new_2018,
                   -inputstate_2018
-                  ) %>% as_tibble() %>%
-  
+                  ) %>% 
+  as_tibble() %>%
   filter(!is.na(caseid)) %>% 
-#  filter(str_detect(question,"_2018")) %>% 
   filter(!is.na(answer)) %>% 
-  distinct() %>% 
-  {.}
+  distinct()
 
 # labels of the questions we want to keep, with a (f)iscal or (s)ocial tag
 questions_to_keep <-  read_csv("axis_flag,question\n
@@ -128,6 +124,7 @@ levels(voter_18$income_2018_000)<-levels(income_key$Label)
 
 # now make income_2018 continuous again, keeping income_2018_000 as a factor
 # for labeling
+# "Decline to answer" (coded as 97) is set to NA.   
 voter_18 <- voter_18 %>% mutate(income_2018=ifelse(income_2018==97,NA,income_2018)) %>%
                     mutate(income_2018=as.numeric(income_2018))
 voter_18
@@ -150,8 +147,10 @@ demographics %>%
   ggplot(aes(race_2018))+geom_bar()+coord_flip()
 ```
 
-The final step in massaging the data is to rescale all the question answers to between one and minus one, interpreted as liberal to conservative, respectively, in two dimensions. "Don't know" (usually coded as 8) is treated as neutral (zero).  "Decline to answer" (coded as 97) is set to `NA`.   If the question is "fiscal", set "social" to `NA` and vice versa.
+## Rescale Answers for Consistency
+The final step in massaging the data is to rescale all the question answers to between one and minus one, interpreted as liberal to conservative, respectively, in two dimensions. "Don't know" (usually coded as 8) is treated as neutral (zero). If the question is "fiscal", set "social" to `NA` and vice versa.
 ```{r}
+#add two new columns.
 voter_18_scaled<-voter_18 %>% mutate(fiscal=0,social=0)
 # +1 is fiscal liberal
 voter_18_scaled <- voter_18_scaled %>% 
