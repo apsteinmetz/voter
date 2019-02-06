@@ -9,7 +9,7 @@ output: html_notebook
 
 At the risk of losing half my readers in the first paragraph, I'll share my political views.  Generally, I believe in "free people and free markets."  That makes me a small-L libertarian.  I find it useful to think of, not a political spectrum from left to right, but a compass with four points.  People have distinct views on social issues that may be separate from their views on government's role in the economy.  The traditional political party platforms don't capture that nuance. There is no room in the Democratic or Republican Parties for a right-to-life person who also wants universal health care.
 
-I have always assumed, that free of the shackles of traditional party labels, most Americans are tolerant of people with different lifestyles than their own.  At the same time we mostly believe that private markets do a better job of allocating resources than government bureaucrats.  *YOU* may not believe that but, as I said, that's been my working assumption about most people.  We lean libertarian under the skin.
+I have always assumed that, free of the shackles of traditional party labels, most Americans are tolerant of people with different lifestyles than their own.  At the same time we mostly believe that private markets do a better job of allocating resources than government bureaucrats.  *YOU* may not believe that but, as I said, that's been my working assumption about most people.  We lean libertarian under the skin.
 
 Last week the founder of Starbucks announced his candidacy for President.  [This article](https://www.nytimes.com/2019/01/30/upshot/could-howard-schultz-help-re-elect-the-president.html) in the *New York Times* suggested he has centrist appeal but that group might be "smaller than he realizes."  The article goes on to say:
 
@@ -50,7 +50,7 @@ Out of the dozens of questions the survey asked, I pulled out those which seemed
   + Views about the Holy Scriptures of own religion, literal truth?
   + Opinion on gay marriage
   + Public restroom usage of transgender people
-  + View on Abortion
+  + View on abortion
   + Desired third party position on social and cultural issues
 
 ## Pull Out Demographic Features
@@ -489,26 +489,21 @@ gg
 
 What I don't like is the result.  Contrary to my pre-conceived notion, it's clear the American electorate is not crypto-libertarian.  Rather, voters want a third party that is highly centrist or highly polarized along traditional liberal/conservative lines.  This makes it unlikely that any single third party could be successful at the ballot box.  Rather, both an extreme left-wing and an extreme right wing party could take votes away from the traditional parties. 
 
-Could Howard Schulz be something of a spoiler from the center?  Possibly.  There are a large number of voters who would like an alternative that is less intrusive than the Democrats on economic issues and less intrusive than the Republicans on moral issues. I disagree with the Times' assessment that, since there are so few absolute libertarians, Schulz will not find a base.  As we see, there are many people who lean toward the center and away from the extremes within their parties, even if they are not libertarian, **per se**.
+Could Howard Schulz be something of a spoiler from the center?  Possibly.  There are a large number of voters who would like an alternative that is less intrusive than the Democrats on economic issues and less intrusive than the Republicans on moral issues. I disagree with the Times' assessment that, since there are so few absolute libertarians, Schulz will not find a base.  As we see, there are many people who lean toward the center and away from the extremes within their parties, even if they are not libertarian, *per se*. But, far too many people are happy with the status quo or would like their party more on the left or rightto make this likely as we see below.
 
 ```{r}
 tmp <-scores_narrow %>% 
-  mutate(social_bucket=cut(social,breaks=c(-1.1,-.25,.25,1.1),
-                    labels=c("Status Quo or More Right",
-                    "To the Center",
-                    "Status Quo or More Left"))) %>% 
-  mutate(fiscal_bucket=cut(fiscal,breaks=c(-1.1,-.25,.25,1.1),
-                    labels=c("Status Quo or More Right",
-                    "To the Center",
-                    "Status Quo or More Left")))
+  mutate(social_direction=cut(abs(social),breaks=c(-0.1,0.25,1.1),
+                    labels=c("To the Center",
+                             "Status Quo or More Extreme"))) %>% 
+  mutate(fiscal_direction=cut(abs(fiscal),breaks=c(-0.1,0.25,1.1),
+                    labels=c("To the Center",
+                             "Status Quo or More Extreme")))
 
 
 
-xtabs(~social_bucket+fiscal_bucket,tmp)
+xtabs(~social_direction+fiscal_direction,tmp) %>% as_tibble()
 ```
-
-
-But, far too many people remain way out on the extremes to make this likely.
 
 ## Conclusion
 I started this exercise hoping to find some support for my personal views among the broader electorate.  Sadly, I didn't find much.  The strongest statement I can make is there is a slight bias among both Republicans and Democrats for more centrist policies.  But the fun of data science is finding things you didn't expect and in validating or refuting hunches and feelings with good science. I know something today I didn't know yesterday so I'll call it a win!
