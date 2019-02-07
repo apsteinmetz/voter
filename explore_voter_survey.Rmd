@@ -25,6 +25,8 @@ Then I read the [article by Lee Drutman](https://www.voterstudygroup.org/publica
 
 This  survey looks like the perfect opportunity to see if my sensibilities are widely shared.  In the process we will learn how to pick apart the VOTER data set. The huge number of questions a rich trove for exploration by any political junkie. The survey results are a CSV file in a zipped package.  The file is in my Github repo but, as a matter of courtesy, *please request it from The Voter Study Group*, as their usage terms stipulate.  It's free and easy.
 
+A quick disclaimer: This is a recreational excercise.  I am not a professional social scientist, data scientist or any kind of scientist at all.  I welcome critiques from people who know what they are talking about.
+
 Start by loading in the raw data. As a matter of style, I like to keep a raw data frame in pristine form and manipulate a copy so if I mess up I can always restart the data munging from the same base.  If memory allows, additional intermediate versions might be helpful. As always, we will be working in the **Tidyverse** dialect.
 
 ```{r message=FALSE, warning=FALSE}
@@ -247,7 +249,7 @@ voter_18_scaled <- voter_18_scaled %>%
 #save(voter_18_scaled,file="data/voter_18_scaled.rdata")
 
 ```
-Now we have values that we can aggregate for each question. They are all normalized and given equal weight. Should each question be given equal weight?  I don't know, but now we can compute average scores for each `caseid` (each one is one voter) . We also add the demographic features to each observation.  So now every `caseid` in the survey is assigned and fiscal and social temperament score. 
+Now we have values that we can aggregate for each question. They are all normalized and given equal weight. Should each question be given equal weight?  I don't know, but now we can compute average scores for each `caseid` (each one is one voter) . We also add the demographic features to each observation.  So now every `caseid` in the survey is assigned a separate fiscal and social temperament score. 
 ```{r message=FALSE, warning=FALSE}
 scores <- voter_18_scaled %>% 
   group_by(caseid) %>% 
@@ -392,7 +394,7 @@ gg
 
 There is some association with more socially liberal views as income rises.  The richer you are, the more tolerant you are of other's lifestyles, I guess.  During the 2016 election there was some questioning around why poor people (mainly rural whites) voted "against their economic interest." This suggests that voting WITH their conservative social interests was more important (I am not saying that our current president embodies conservative social values).  [Most pundits put a racial angle on this](https://www.politico.com/magazine/story/2017/12/31/trump-white-working-class-history-216200).  In all income cohorts the median voter is at least a shade liberal on social issues.
 
-How Much Does Location Matter?
+## How Much Does Location Matter?
 
 Let's look at average scores by state.  To remind us of the influence that larger states have on the overall numbers we'll grab population data from the Census Bureau.  There are a number of R packages to access the census API but those are more than we need and require an API key.  Here, we'll just grab a summary CSV file from the web site.  
 ```{r}
@@ -434,7 +436,7 @@ If I had created this chart first I might have been excited.  It shows that the 
 
 ## My Last Attempt at Validation
 
-I went through the *YouGov.com* survey and picked out the questions I feel are relevant, a highly subjective exercise. Even so,the results do not support my hope that maybe a plurality of people have libertarian sensibilities.  But there were hints that gave me some hope.
+I went through the *YouGov.com* survey and picked out the questions I feel are relevant, a highly subjective exercise. Even so,the results do not support my belief that maybe a plurality of people have libertarian sensibilities.  But there were hints that gave me some hope.
 
 First, there is a clear yearning for a choice beyond the existing parties as this question shows:
 
